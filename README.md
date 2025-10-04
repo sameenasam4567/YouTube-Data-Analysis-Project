@@ -268,8 +268,6 @@ Athena	QuickSight queries	athena:StartQueryExecution, athena:GetQueryResults
 Glue	QuickSight queries	glue:GetDatabase, glue:GetTables
 QuickSight	Access via SPICE	Needs attached service role with above permissions
 ________________________________________
-
-
 Layer 1: S3 – Storage Layer (Raw Data)
 Purpose:
 •	Stores all your raw YouTube data (CSV, JSON, Parquet files).
@@ -361,107 +359,26 @@ Bar chart not showing	QuickSight	SPICE dataset empty	After SPICE import complete
 Confusion with CloudTrail policy	IAM	CloudTrail not needed	Ignored CloudTrail generation; used manual JSON policy
 Horizontal bar X-axis missing	QuickSight	SPICE dataset empty	Import SPICE first, then drag correct fields (Value, Y-axis)
 ________________________________________
-This broken-down view shows exactly:
-•	What each layer does
-•	Where the data lives
-•	How permissions flow
-•	Why we faced errors and how we fixed them
-________________________________________
-
-1. What was the goal of this project?
-The goal was to build a simple end-to-end data pipeline that collects, stores, processes, analyzes, and visualizes YouTube data using AWS services. The pipeline transforms raw CSV data stored in Amazon S3 into insightful dashboards in QuickSight through Glue and Athena.
-________________________________________
-2. What AWS services were used and why?
-Service	Purpose
-Amazon S3	To store the raw CSV files and cleaned data outputs.
-AWS Glue	To crawl, catalog, and clean the data automatically.
-Amazon Athena	To query and analyze the data directly from S3 using SQL.
-Amazon QuickSight	To create interactive dashboards and visualizations.
-________________________________________
-3. What dataset was used?
+- What dataset was used?
 A custom dataset named youtube_data.csv was created with columns like video_id, title, channel, category, views, likes, comments, and upload_date.
 Example records:
 | video_id | title | channel | category | views | likes | comments | upload_date |
 |-----------|--------|----------|-----------|--------|---------|-------------|
 | v101 | Travel Vlog | ExploreWorld | Travel | 120000 | 5000 | 430 | 2024-08-01 |
 ________________________________________
-4. How was the raw data stored?
-The raw data file (youtube_data.csv) was uploaded to an S3 bucket named:
-s3://youtube-data-sameena/raw/youtube_data.csv
-This represents the Bronze Layer in the medallion architecture.
-________________________________________
-5. How did AWS Glue help in the process?
-•	A Glue Crawler was created to scan the S3 path.
-•	It automatically detected the schema (columns, types, file format).
-•	It created a table in the Glue Data Catalog inside the database youtube_data_db.
-•	This table could then be queried using Amazon Athena.
-________________________________________
-6. What is the data architecture used?
-The project followed a Medallion Architecture:
-Layer	Location	Description
-Bronze (Raw)	s3://youtube-data-sameena/raw/	Original CSV data
-Silver (Processed)	s3://youtube-data-sameena/clean/	Cleaned and formatted data
-Gold (Curated)	s3://youtube-data-sameena/final/	Analytics-ready data for QuickSight
-________________________________________
-7. How was the data cleaned or transformed?
+- How was the data cleaned or transformed?
 In this project, no PySpark script was used.
 Instead, AWS Glue Crawler and Job visual interface were used to detect schema and prepare the data.
 If needed, transformations could be done with PySpark, but in this version we relied on the Crawler to handle structure recognition without PySpark code.
 ________________________________________
-8. How was data analyzed?
-Using Amazon Athena:
-1.	Selected the database youtube_data_db.
-2.	Queried the table created by Glue using SQL.
-Example:
-3.	SELECT category, SUM(views) AS total_views 
-4.	FROM youtube_data_sameena
-5.	GROUP BY category;
-6.	Verified that Athena could read data directly from S3.
-________________________________________
-9. How was data visualized in QuickSight?
-Steps:
-1.	Connected QuickSight to Athena as a data source.
-2.	Selected the Glue database and table (youtube_data_sameena).
-3.	Imported data into SPICE for faster visualization.
-4.	Created visuals:
-o	Bar chart: Top categories by views
-o	Pie chart: Category distribution
-o	Line chart: Views over time
-o	KPI cards: Total videos, average likes
-________________________________________
-10. What problems were faced and how were they resolved?
+- What problems were faced and how were they resolved?
 Issue	Cause	Resolution
 SPICE import failed (0 bytes)	QuickSight role didn’t have permissions for Athena, Glue, or S3	Created custom IAM policy QuickSightAthenaS3Access and attached it to the role aws-quicksight-service-role-v0
 “Insufficient permissions to connect to dataset”	Missing role access	Sameenae policy fix resolved it
 Chart not displaying X/Y axis	SPICE dataset empty	After SPICE import succeeded, visuals loaded correctly
 Athena query error (Entity not found)	Database or region mismatch	Verified database name (youtube_data_db) and region alignment
 ________________________________________
-11. What was in the custom IAM policy?
-Policy name: QuickSightAthenaS3Access
-Policy JSON:
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "athena:StartQueryExecution",
-        "athena:GetQueryResults",
-        "athena:GetQueryExecution",
-        "glue:GetDatabase",
-        "glue:GetDatabases",
-        "glue:GetTable",
-        "glue:GetTables",
-        "s3:GetObject",
-        "s3:ListBucket"
-      ],
-      "Resource": "*"
-    }
-  ]
-}
-This allowed QuickSight to read data from S3, Glue, and Athena.
-________________________________________
-12. What was the final output?
+- What was the final output?
 •	A QuickSight Dashboard showing key insights:
 o	Total videos
 o	Total and average views per category
@@ -470,14 +387,11 @@ o	Channel-wise performance
 •	A fully automated pipeline:
 •	S3 (Raw) → Glue Crawler → Athena → QuickSight Dashboard
 ________________________________________
-13. Key Learnings
+- Key Learnings
 1.	Glue Crawlers are powerful for schema inference without writing code.
 2.	IAM permissions are crucial for cross-service integrations.
 3.	SPICE import improves dashboard performance.
 4.	Even without PySpark, data pipelines can be built efficiently using AWS managed services.
-
-END
-
 
 ### Results
 
@@ -485,17 +399,15 @@ END
 * Improved scalability and flexibility with AWS cloud integration.
 * Delivered real-time insights through dynamic QuickSight dashboards.
 
-
 ### Future Enhancements
 
 * Integrate real-time data streaming using AWS Kinesis or Kafka.
 * Implement predictive analytics for video trend forecasting.
 * Add automated alerts and reporting.
 
-
 ### Author
 
-Sameena Begum S
+**Sameena Begum S**
 
 📧 sameenasam4567@gmail.com
 🔗 https://www.linkedin.com/in/sameena-begum-s-9156b9250/     |  
