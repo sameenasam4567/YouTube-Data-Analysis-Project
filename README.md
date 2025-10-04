@@ -25,19 +25,6 @@ The project follows a modern **data lake architecture** with three layers:
 * **Amazon QuickSight** – Data visualization and dashboarding
 * **AWS IAM** – Access management and role-based security
 
-### Project Workflow
-
-1. **Data Ingestion:** Uploaded on-premises YouTube dataset into Amazon S3 (Bronze layer).
-2. **Data Transformation:** Used AWS Glue jobs to clean and structure the data (Silver layer).
-3. **Data Analysis:** Queried the processed data using Athena.
-4. **Data Visualization:** Created interactive dashboards in QuickSight (Gold layer).
-
-### Key Insights
-
-* Identified top-performing videos by category and region.
-* Discovered correlations between likes, views, and comments.
-* Built automated ETL pipelines ensuring zero data loss during migration.
-
 📂 Dataset
 
 Create a file called youtube_data.csv with these columns:
