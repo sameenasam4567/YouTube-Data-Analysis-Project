@@ -38,19 +38,6 @@ The project follows a modern **data lake architecture** with three layers:
 * Discovered correlations between likes, views, and comments.
 * Built automated ETL pipelines ensuring zero data loss during migration.
 
-🧩 Project Title:
-YouTube Data Analysis Pipeline using AWS (S3, Glue, Athena, and QuickSight)
-________________________________________
-🧩 Project Overview
-•	Assume you’re collecting YouTube channel data (video titles, views, likes, comments, etc.)
-•	You’ll store, clean, analyze, and visualize that data using AWS.
-________________________________________
-⚙️ AWS Services You’ll Use
-•	Amazon S3 → store data
-•	AWS Glue → clean and transform data 
-•	Amazon Athena → query data using SQL
-•	Amazon QuickSight → build a dashboard
-________________________________________
 📂 Dataset
 
 Create a file called youtube_data.csv with these columns:
